@@ -1,20 +1,70 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Weather App
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+A weather service application built with .NET Core backend and React frontend that retrieves weather descriptions using the OpenWeatherMap API.
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+## Prerequisites
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+- .NET 6.0 SDK
+- Node.js and npm
+- Git
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/Bahi-slh/WeatherApp.git
+cd WeatherApp
+```
+
+2. Backend Setup:
+```bash
+cd WeatherAPI
+dotnet restore
+dotnet build
+```
+
+3. Frontend Setup:
+```bash
+cd ../ui
+npm install
+```
+
+## Running the Application
+
+1. Start the Backend:
+```bash
+cd WeatherAPI
+dotnet run
+```
+Backend will run on http://localhost:5169
+
+2. Start the Frontend (in a new terminal):
+```bash
+cd ui
+npm start
+```
+Frontend will run on http://localhost:3000
+
+## Features
+### Backend
+
+- Rate limiting system with 5 API keys (5 requests per hour per key)
+- REST endpoint accepting city and country parameters
+- OpenWeatherMap API integration with key rotation
+- Returns weather description field only
+- Error handling for rate limits and invalid requests
+
+### Frontend
+
+- Simple form for city and country input
+- Displays weather description results
+- Shows appropriate error messages
+- Loading state handling
+
+## Testing
+Test the following scenarios:
+
+- Valid city/country combinations (for example: Melbourne, AU)
+- Rate limiting by making more than 5 requests in an hour
+- Invalid city/country combinations
+- Error message display
