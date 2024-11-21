@@ -1,15 +1,35 @@
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using WeatherAPI.Configs;
+using WeatherAPI.Services;
+using WeatherAPI.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.Configure<ApiKeyConfig>(options =>
+{
+    options.ApiKeys = builder.Configuration.GetSection("ApiKeys").Get<List<string>>();
+});
+
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Weather API",
+        Version = "v1",
+        Description = "Returns weather descriptions for given city and country"
+    });
+});
+
+builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,6 +37,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<LimitMiddleware>();
 
 app.UseAuthorization();
 
