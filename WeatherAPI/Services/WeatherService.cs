@@ -32,6 +32,7 @@ namespace WeatherAPI.Services
             }
         }
 
+
         public async Task<string> GetWeather(string city, string country)
         {
             var openWeatherMapKey = GetOpenWeatherMapKey();
@@ -43,7 +44,9 @@ namespace WeatherAPI.Services
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var weatherData = JObject.Parse(content);
-                return weatherData["weather"]?[0]?["description"]?.ToString();
+                var description = weatherData["weather"]?[0]?["description"]?.ToString();
+
+                return JsonConvert.SerializeObject(new { description = description });
             }
 
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)

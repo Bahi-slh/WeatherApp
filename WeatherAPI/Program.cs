@@ -6,13 +6,16 @@ using WeatherAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<ApiKeyConfig>(options =>
+
+builder.Services.AddCors(options =>
 {
-    options.ApiKeys = builder.Configuration.GetSection("ApiKeys").Get<List<string>>();
+    options.AddPolicy("AllowReactApp",
+        builder => builder
+            .WithOrigins("http://localhost:3000") 
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 });
 
-
-builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -25,6 +28,12 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
+builder.Services.Configure<ApiKeyConfig>(options =>
+{
+    options.ApiKeys = builder.Configuration.GetSection("ApiKeys").Get<List<string>>();
+});
+builder.Services.AddControllers();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 builder.Services.AddMemoryCache();
 
@@ -36,10 +45,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseCors("AllowReactApp");
+
 app.UseHttpsRedirection();
-
 app.UseMiddleware<LimitMiddleware>();
-
 app.UseAuthorization();
 
 app.MapControllers();

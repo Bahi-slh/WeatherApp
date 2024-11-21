@@ -19,23 +19,24 @@ namespace WeatherAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetWeather([FromQuery] string city, [FromQuery] string country)
         {
-            _logger.LogInformation("Fetching data for {City}, {Country}", city, country);
+            if (string.IsNullOrWhiteSpace(city) || string.IsNullOrWhiteSpace(country))
+            {
+                return BadRequest("City and country are required");
+            }
 
             try
             {
                 var result = await _weatherService.GetWeather(city, country);
                 if (result == null)
                 {
-                    _logger.LogWarning("No data found for {City}, {Country}", city, country);
-                    return NotFound("No data found.");
+                    return NotFound($"No weather data found for {city}, {country}");
                 }
-
-                return Ok(result);
+                return Content(result, "application/json");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching data for {City}, {Country}", city, country);
-                return StatusCode(500, "Server error");
+                _logger.LogError(ex, "Error fetching weather for {City}, {Country}", city, country);
+                return StatusCode(500, "An error occurred while processing your request");
             }
         }
 
